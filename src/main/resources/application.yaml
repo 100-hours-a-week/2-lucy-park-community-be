@@ -4,8 +4,14 @@ spring:
     username: root
     password: pass
     driver-class-name: com.mysql.cj.jdbc.Driver
+  web:
+    resources:
+      static-locations: classpath:/static/
+      cache:
+        period: 3600
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+
