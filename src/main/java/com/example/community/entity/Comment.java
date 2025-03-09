@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,7 +22,8 @@ public class Comment {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private boolean deleted;
+    @Builder.Default
+    private boolean deleted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

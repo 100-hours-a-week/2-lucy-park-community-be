@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,23 +24,27 @@ public class Post {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    private String image;
+    private String imageUrl;
 
+    @Builder.Default
     @Column(nullable = false)
     private int likes = 0;
 
+    @Builder.Default
     private int views = 0;
 
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private boolean deleted;
+    @Builder.Default
+    private boolean deleted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)  // orphanRemoval = false
     private List<Comment> comments = new ArrayList<>();
 }
