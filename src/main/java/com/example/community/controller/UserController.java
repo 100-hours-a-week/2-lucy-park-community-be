@@ -1,11 +1,7 @@
 package com.example.community.controller;
 
-import com.example.community.domain.User;
 import com.example.community.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
