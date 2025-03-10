@@ -1,6 +1,9 @@
 package com.example.community.controller;
 
+import com.example.community.dto.User.Request.UserLoginRequestDto;
 import com.example.community.dto.User.Request.UserSigninRequestDto;
+import com.example.community.dto.User.Response.UserLoginResponseDto;
+import com.example.community.entity.RefreshToken;
 import com.example.community.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +23,11 @@ public class UserController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody UserSigninRequestDto requestDto) {
         userService.registerUser(requestDto);
         return ResponseEntity.ok("회원가입에 성공하였습니다.");
+    }
+
+    @PostMapping("/session")
+    public ResponseEntity<UserLoginResponseDto> loginUser(@Valid @RequestBody UserLoginRequestDto requestDto) {
+        UserLoginResponseDto userLoginResponseDto = userService.loginUser(requestDto);
+        return ResponseEntity.ok(userLoginResponseDto);
     }
 }

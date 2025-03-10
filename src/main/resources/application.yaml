@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   web:
     resources:
-      static-locations: classpath:/static/
+      static-locations: file:./uploads/
       cache:
         period: 3600
 
@@ -14,4 +14,12 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+jwt:
+  private-key: ${JWT_PRIVATE_KEY}
+  public-key: ${JWT_PUBLIC_KEY}
 

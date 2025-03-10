@@ -3,6 +3,7 @@ package com.example.community.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,6 +37,13 @@ public class Post {
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(nullable = true)
+    private LocalDateTime deletedAt;
 
     @Builder.Default
     private boolean deleted = false;
