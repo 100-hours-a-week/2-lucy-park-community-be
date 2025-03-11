@@ -1,6 +1,5 @@
 package com.example.community.dto.Post.Request;
 
-import com.example.community.dto.Auth.AuthenticatedRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDeleteRequestDto extends AuthenticatedRequestDto {
+public class PostDeleteRequestDto {
     @NotBlank
     private Long postId;
 }

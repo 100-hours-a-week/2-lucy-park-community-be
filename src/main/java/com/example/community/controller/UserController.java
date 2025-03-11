@@ -1,8 +1,6 @@
 package com.example.community.controller;
 
-import com.example.community.dto.User.Request.UserLoginRequestDto;
-import com.example.community.dto.User.Request.UserSigninRequestDto;
-import com.example.community.dto.User.Request.UserUpdateProfileImageRequestDto;
+import com.example.community.dto.User.Request.*;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
 import com.example.community.entity.RefreshToken;
@@ -35,8 +33,20 @@ public class UserController {
     }
 
     @PatchMapping("/profile/image")
-    public  ResponseEntity<UserUpdateProfileImageResponseDto> updateProfileImage(@Valid @RequestBody UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
+    public ResponseEntity<UserUpdateProfileImageResponseDto> updateProfileImage(@Valid @RequestBody UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
         UserUpdateProfileImageResponseDto userUpdateProfileImageResponseDto = userService.updateProfileImage(requestDto, request);
         return ResponseEntity.ok(userUpdateProfileImageResponseDto);
+    }
+
+    @PatchMapping("/profile/nickname")
+    public ResponseEntity<String> updateNickname(@Valid @RequestBody UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
+        userService.updateNickname(requestDto, request);
+        return ResponseEntity.ok("닉네임 수정 성공하였습니다.");
+    }
+
+    @PatchMapping("/profile/password")
+    public ResponseEntity<String> updatePassword(@Valid @RequestBody UserUpdatePasswordRequestDto requestDto, HttpServletRequest request) {
+        userService.updatePassword(requestDto, request);
+        return ResponseEntity.ok("비밀번호 수정 성공하였습니다.");
     }
 }

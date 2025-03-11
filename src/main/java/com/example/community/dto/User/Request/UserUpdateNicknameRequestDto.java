@@ -1,6 +1,5 @@
 package com.example.community.dto.User.Request;
 
-import com.example.community.dto.Auth.AuthenticatedRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateNicknameRequestDto extends AuthenticatedRequestDto {
+public class UserUpdateNicknameRequestDto {
     @NotBlank(message = "닉네임을 입력해주세요.")
-    @Size(min = 8, max = 20, message = "닉네임은 10자 이하로 입력해주세요.")
+    @Size(min = 2, max = 10, message = "닉네임은 10자 이하로 입력해주세요.")
     private String nickname;
 }

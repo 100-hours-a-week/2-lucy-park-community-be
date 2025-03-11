@@ -24,14 +24,10 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final PublicKey publicKey;
-    private UserRepository userRepository;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsServiceImpl customUserDetailsService;
 
-    public JwtTokenProvider(@Value("${JWT_PUBLIC_KEY}") String publicKeyStr, UserRepository userRepository, JwtAuthenticationFilter jwtAuthenticationFilter, CustomUserDetailsServiceImpl customUserDetailsService) {
+    public JwtTokenProvider(@Value("${JWT_PUBLIC_KEY}") String publicKeyStr, CustomUserDetailsServiceImpl customUserDetailsService) {
         this.publicKey = loadPublicKey(publicKeyStr);
-        this.userRepository = userRepository;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -83,21 +79,5 @@ public class JwtTokenProvider {
         Long userId = getUserIdFromToken(token);
         UserDetails userDetails = customUserDetailsService.loadUserById(userId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    }
-
-    // 회원 조회
-    public User verifyUser(HttpServletRequest request) {
-
-        String token = jwtAuthenticationFilter.resolveToken(request);
-        if (token == null || validateToken(token)) {
-            throw new RuntimeException("❌ 유효하지 않은 JWT 토큰입니다.");
-        }
-
-        Long userId = getUserIdFromToken(token);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
-
-        return user;
     }
 }

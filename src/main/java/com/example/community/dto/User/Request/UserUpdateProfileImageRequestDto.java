@@ -1,6 +1,5 @@
 package com.example.community.dto.User.Request;
 
-import com.example.community.dto.Auth.AuthenticatedRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,11 +1,9 @@
 package com.example.community.dto.User.Request;
 
-import com.example.community.dto.Auth.AuthenticatedRequestDto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

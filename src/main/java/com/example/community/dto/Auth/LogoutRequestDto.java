@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class LogoutRequestDto extends AuthenticatedRequestDto {
+public class LogoutRequestDto {
     private Long id;
 }

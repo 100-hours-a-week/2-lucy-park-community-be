@@ -1,7 +1,9 @@
 package com.example.community.security;
 
 import com.example.community.entity.User;
+import com.example.community.repository.UserRepository;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +20,20 @@ import java.util.Date;
 public class JwtUtil {
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
+    private UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenProvider jwtTokenProvider;
     private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30; // 테스트 위해 길게 설정, 수정 필요
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
 
     public JwtUtil(@Value("${JWT_PRIVATE_KEY}") String privateKey,
-                   @Value("${JWT_PUBLIC_KEY}") String publicKey) throws Exception {
+                   @Value("${JWT_PUBLIC_KEY}") String publicKey,
+                   UserRepository userRepository, JwtAuthenticationFilter jwtAuthenticationFilter, JwtTokenProvider jwtTokenProvider) throws Exception {
         this.privateKey = loadPrivateKey(privateKey);
         this.publicKey = loadPublicKey(publicKey);
+        this.userRepository = userRepository;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     /**
@@ -64,5 +73,21 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME))
                 .signWith(privateKey, SignatureAlgorithm.RS256) // RS256 적용
                 .compact();
+    }
+
+    // 회원 조회
+    public User verifyUser(HttpServletRequest request) {
+
+        String token = jwtAuthenticationFilter.resolveToken(request);
+        if (token == null || !jwtTokenProvider.validateToken(token)) {
+            throw new RuntimeException("❌ 유효하지 않은 JWT 토큰입니다.");
+        }
+
+        Long userId = jwtTokenProvider.getUserIdFromToken(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+
+        return user;
     }
 }

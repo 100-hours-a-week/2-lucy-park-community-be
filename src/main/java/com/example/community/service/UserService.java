@@ -1,8 +1,6 @@
 package com.example.community.service;
 
-import com.example.community.dto.User.Request.UserLoginRequestDto;
-import com.example.community.dto.User.Request.UserSigninRequestDto;
-import com.example.community.dto.User.Request.UserUpdateProfileImageRequestDto;
+import com.example.community.dto.User.Request.*;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
 import com.example.community.entity.RefreshToken;
@@ -26,16 +24,14 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final JwtTokenProvider jwtTokenProvider;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil,
-                       JwtTokenProvider jwtTokenProvider, JwtAuthenticationFilter jwtAuthenticationFilter, PasswordEncoder passwordEncoder) {
+                       JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtUtil = jwtUtil;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -53,7 +49,7 @@ public class UserService {
             throw new IllegalArgumentException("이미지를 먼저 업로드해주세요.");
         }
 
-        // 비밀번호 암호화 구현 필요
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
         User user = User.builder()
@@ -75,7 +71,7 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 토큰 발급 코드
+        // 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
@@ -100,7 +96,7 @@ public class UserService {
     // 회원 프로필 사진 수정
     public UserUpdateProfileImageResponseDto updateProfileImage(UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
 
-        User user = jwtTokenProvider.verifyUser(request);
+        User user = jwtUtil.verifyUser(request);
         if(requestDto.getImageUrl() != null) {
             user.setImageUrl(requestDto.getImageUrl());
         }
@@ -108,5 +104,26 @@ public class UserService {
         return UserUpdateProfileImageResponseDto.builder()
                 .imageUrl(user.getImageUrl())
                 .build();
+    }
+
+    //
+    public User updateNickname(UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
+
+        User user = jwtUtil.verifyUser(request);
+        if(requestDto.getNickname() != null) {
+            user.setNickname(requestDto.getNickname());
+        }
+        return user;
+    }
+
+    // 비밀번호
+    public User updatePassword(UserUpdatePasswordRequestDto requestDto, HttpServletRequest request) {
+
+        User user = jwtUtil.verifyUser(request);
+        if(requestDto.getPassword() != null) {
+            String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        return user;
     }
 }
