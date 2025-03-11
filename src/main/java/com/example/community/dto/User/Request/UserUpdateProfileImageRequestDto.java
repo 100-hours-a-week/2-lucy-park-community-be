@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateProfileImageRequestDto extends AuthenticatedRequestDto {
+public class UserUpdateProfileImageRequestDto {
     @NotBlank(message = "이미지를 첨부해주세요.")
     private String imageUrl;
 }

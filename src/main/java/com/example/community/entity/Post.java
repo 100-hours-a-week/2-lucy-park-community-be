@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "post")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

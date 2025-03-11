@@ -1,6 +1,6 @@
 package com.example.community.controller;
 
-import com.example.community.dto.ImageUploadResponseDto;
+import com.example.community.dto.Image.ImageUploadResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,13 +15,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/api")
 @Slf4j
 public class ImageController {
 
     private static final String UPLOAD_DIR = "/uploads/";
 
-    @PostMapping
+    @PostMapping("/image")
     public ResponseEntity<?> uploadImage(@RequestParam("imageFile") MultipartFile imageFile,
                                          @RequestParam("type") String type) {
         if (imageFile.isEmpty()) {

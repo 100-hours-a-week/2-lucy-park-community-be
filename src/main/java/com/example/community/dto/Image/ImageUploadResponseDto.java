@@ -1,4 +1,4 @@
-package com.example.community.dto;
+package com.example.community.dto.Image;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

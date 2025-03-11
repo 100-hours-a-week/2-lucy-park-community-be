@@ -1,6 +1,6 @@
 package com.example.community.security;
 
-import io.jsonwebtoken.JwtException;
+import com.example.community.entity.User;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ import java.util.Date;
 public class JwtUtil {
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 10;
-    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 10;;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30; // 테스트 위해 길게 설정, 수정 필요
+    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
 
     public JwtUtil(@Value("${JWT_PRIVATE_KEY}") String privateKey,
                    @Value("${JWT_PUBLIC_KEY}") String publicKey) throws Exception {
@@ -48,45 +48,21 @@ public class JwtUtil {
     /**
      * JWT 토큰 생성 (RS256 적용)
      */
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
                 .signWith(privateKey, SignatureAlgorithm.RS256) // RS256 적용
                 .compact();
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(User user) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(String.valueOf(user.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME))
                 .signWith(privateKey, SignatureAlgorithm.RS256) // RS256 적용
                 .compact();
-    }
-
-    /**
-     * JWT 토큰 검증
-     */
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
-
-   /* *
-     * 토큰에서 사용자 이메일 추출*/
-
-    public String getEmailFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(publicKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
     }
 }

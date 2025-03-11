@@ -2,9 +2,12 @@ package com.example.community.controller;
 
 import com.example.community.dto.User.Request.UserLoginRequestDto;
 import com.example.community.dto.User.Request.UserSigninRequestDto;
+import com.example.community.dto.User.Request.UserUpdateProfileImageRequestDto;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
+import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
 import com.example.community.entity.RefreshToken;
 import com.example.community.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +32,11 @@ public class UserController {
     public ResponseEntity<UserLoginResponseDto> loginUser(@Valid @RequestBody UserLoginRequestDto requestDto) {
         UserLoginResponseDto userLoginResponseDto = userService.loginUser(requestDto);
         return ResponseEntity.ok(userLoginResponseDto);
+    }
+
+    @PatchMapping("/profile/image")
+    public  ResponseEntity<UserUpdateProfileImageResponseDto> updateProfileImage(@Valid @RequestBody UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
+        UserUpdateProfileImageResponseDto userUpdateProfileImageResponseDto = userService.updateProfileImage(requestDto, request);
+        return ResponseEntity.ok(userUpdateProfileImageResponseDto);
     }
 }
