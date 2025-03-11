@@ -1,7 +1,12 @@
 package com.example.community.security;
 
+import com.example.community.dto.User.Request.UserUpdateProfileImageRequestDto;
+import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
+import com.example.community.entity.User;
+import com.example.community.repository.UserRepository;
 import com.example.community.service.CustomUserDetailsServiceImpl;
 import io.jsonwebtoken.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,10 +24,14 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final PublicKey publicKey;
+    private UserRepository userRepository;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsServiceImpl customUserDetailsService;
 
-    public JwtTokenProvider(@Value("${JWT_PUBLIC_KEY}") String publicKeyStr, CustomUserDetailsServiceImpl customUserDetailsService) {
+    public JwtTokenProvider(@Value("${JWT_PUBLIC_KEY}") String publicKeyStr, UserRepository userRepository, JwtAuthenticationFilter jwtAuthenticationFilter, CustomUserDetailsServiceImpl customUserDetailsService) {
         this.publicKey = loadPublicKey(publicKeyStr);
+        this.userRepository = userRepository;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customUserDetailsService = customUserDetailsService;
     }
 
@@ -45,7 +54,7 @@ public class JwtTokenProvider {
             System.out.println("🔍 공개키: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
 
             Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(publicKey)  // 🔥 공개키 확인
+                    .setSigningKey(publicKey)
                     .build()
                     .parseClaimsJws(token);
 
@@ -66,7 +75,7 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject()); // 🔥 userId를 가져오도록 변경
+                .getSubject());
     }
 
     // Authentication 객체 생성
@@ -74,5 +83,21 @@ public class JwtTokenProvider {
         Long userId = getUserIdFromToken(token);
         UserDetails userDetails = customUserDetailsService.loadUserById(userId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    // 회원 조회
+    public User verifyUser(HttpServletRequest request) {
+
+        String token = jwtAuthenticationFilter.resolveToken(request);
+        if (token == null || validateToken(token)) {
+            throw new RuntimeException("❌ 유효하지 않은 JWT 토큰입니다.");
+        }
+
+        Long userId = getUserIdFromToken(token);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+
+        return user;
     }
 }

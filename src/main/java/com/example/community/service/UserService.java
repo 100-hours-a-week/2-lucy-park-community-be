@@ -100,16 +100,7 @@ public class UserService {
     // 회원 프로필 사진 수정
     public UserUpdateProfileImageResponseDto updateProfileImage(UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
 
-        String token = jwtAuthenticationFilter.resolveToken(request);
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
-            throw new RuntimeException("❌ 유효하지 않은 JWT 토큰입니다.");
-        }
-
-        Long userId = jwtTokenProvider.getUserIdFromToken(token);
-
-        User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
-
+        User user = jwtTokenProvider.verifyUser(request);
         if(requestDto.getImageUrl() != null) {
             user.setImageUrl(requestDto.getImageUrl());
         }
