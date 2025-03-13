@@ -2,6 +2,7 @@ package com.example.community.controller;
 
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
+import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
 import com.example.community.entity.Post;
 import com.example.community.service.PostService;
@@ -39,4 +40,15 @@ public class PostController {
         return ResponseEntity.ok("게시글 수정에 성공하였습니다.");
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailResponseDto> readPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.readPost(postId));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<String> deletePost(@PathVariable Long postId,
+                                             HttpServletRequest request) {
+        postService.deletePost(postId, request);
+        return ResponseEntity.ok("게시글 삭제에 성공하였습니다.");
+    }
 }

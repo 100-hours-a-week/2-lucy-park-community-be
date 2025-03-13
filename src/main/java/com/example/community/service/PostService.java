@@ -2,6 +2,7 @@ package com.example.community.service;
 
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
+import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Post;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,7 +97,7 @@ public class PostService {
 
     // 전체 게시글 조회
     public List<PostListResponseDto> readPosts() {
-        return postRepository.findAll().stream()
+        return postRepository.findByDeletedFalse().stream()
                 .map(post -> PostListResponseDto.builder()
                         .id(post.getId())
                         .title(post.getTitle())
@@ -110,6 +112,47 @@ public class PostService {
                         .createdAt(post.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // 게시글 상세 조회
+    public PostDetailResponseDto readPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        return PostDetailResponseDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .imageUrl(post.getImageUrl())
+                .likes(post.getLikes())
+                .views(post.getViews())
+                .comments(post.getComments())
+                .user(UserResponseDto.builder()
+                        .id(post.getUser().getId())
+                        .nickname(post.getUser().getNickname())
+                        .imageUrl(post.getUser().getImageUrl())
+                        .build())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    // 게시글 삭제
+    public Post deletePost(Long postId, HttpServletRequest request) {
+        User user = jwtUtil.verifyUser(request);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        // 마찬가지로 프론트엔드에서도 처리 필요
+        if(!post.getUser().getId().equals(user.getId())) {
+            throw new SecurityException("게시글 삭제 권한이 없습니다.");
+        }
+
+        post.setDeleted(true);
+        post.setDeletedAt(LocalDateTime.now());
+        postRepository.save(post);
+
+        return post;
     }
 
 }
