@@ -23,8 +23,8 @@ public class JwtUtil {
     private UserRepository userRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30; // 테스트 위해 길게 설정, 수정 필요
-    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 30;
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60; // 테스트 위해 길게 설정, 수정 필요
+    private static final long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60;
 
     public JwtUtil(@Value("${JWT_PRIVATE_KEY}") String privateKey,
                    @Value("${JWT_PUBLIC_KEY}") String publicKey,

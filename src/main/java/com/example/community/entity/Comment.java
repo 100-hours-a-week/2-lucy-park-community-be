@@ -1,5 +1,7 @@
 package com.example.community.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +28,7 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @Builder.Default
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
 
     @ManyToOne

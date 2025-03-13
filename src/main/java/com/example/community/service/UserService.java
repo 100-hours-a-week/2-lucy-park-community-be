@@ -23,15 +23,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil,
-                       JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtUtil = jwtUtil;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
     }
 

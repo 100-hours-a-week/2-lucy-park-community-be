@@ -1,6 +1,6 @@
 package com.example.community.dto.Post.Response;
 
-import com.example.community.entity.User;
+import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public abstract class AbstractPostResponseDto {
     protected String title;
     protected int likes;
     protected int views;
-    protected User user;
+    protected UserResponseDto user;
 
     @Builder.Default
     protected List<Comment> comments = new ArrayList<>();

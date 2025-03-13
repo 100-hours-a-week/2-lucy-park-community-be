@@ -15,6 +15,5 @@ public class PostCreateRequestDto {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    @NotBlank(message = "이미지를 첨부해주세요.")
     private String imageUrl;
 }

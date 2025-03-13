@@ -1,5 +1,7 @@
 package com.example.community.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,13 +44,14 @@ public class Post {
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime updatedAt;
 
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
     @Builder.Default
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
 
     @ManyToOne

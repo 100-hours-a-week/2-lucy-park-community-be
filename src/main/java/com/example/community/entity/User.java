@@ -1,5 +1,7 @@
 package com.example.community.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +37,7 @@ public class User implements UserDetails {
     private String imageUrl;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
 
     @Builder.Default

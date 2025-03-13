@@ -1,3 +1,4 @@
+/*
 package com.example.community.dto.Post.Request;
 
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDeleteRequestDto {
-    @NotBlank
-    private Long postId;
 }
+*/

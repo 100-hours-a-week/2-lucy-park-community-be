@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUpdateRequestDto {
-    @NotBlank
-    private Long postId;
-
     private String title;
     private String content;
     private String imageUrl;
