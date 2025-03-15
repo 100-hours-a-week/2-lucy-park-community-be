@@ -1,10 +1,12 @@
 package com.example.community.service;
 
+import com.example.community.dto.Comment.Response.CommentResponseDto;
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
 import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
+import com.example.community.entity.Comment;
 import com.example.community.entity.Post;
 import com.example.community.entity.User;
 import com.example.community.repository.PostRepository;
@@ -97,18 +99,31 @@ public class PostService {
 
     // 전체 게시글 조회
     public List<PostListResponseDto> readPosts() {
-        return postRepository.findByDeletedFalse().stream()
+        return postRepository.findAllWithComments().stream()
                 .map(post -> PostListResponseDto.builder()
                         .id(post.getId())
                         .title(post.getTitle())
                         .likes(post.getLikes())
                         .views(post.getViews())
-                        .comments(post.getComments())
                         .user(UserResponseDto.builder()
                                 .id(post.getUser().getId())
                                 .nickname(post.getUser().getNickname())
                                 .imageUrl(post.getUser().getImageUrl())
                                 .build())
+                        .comments(post.getComments()
+                                .stream()
+                                .filter(comment -> !comment.isDeleted())
+                                .map(comment -> CommentResponseDto.builder()
+                                        .id(comment.getId())
+                                        .content(comment.getContent())
+                                        .user(UserResponseDto.builder()  // 🔥 댓글 작성자 정보 추가
+                                                .id(comment.getUser().getId())
+                                                .nickname(comment.getUser().getNickname())
+                                                .imageUrl(comment.getUser().getImageUrl())
+                                                .build())
+                                        .createdAt(comment.getCreatedAt())
+                                        .build())
+                                .collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
@@ -126,7 +141,20 @@ public class PostService {
                 .imageUrl(post.getImageUrl())
                 .likes(post.getLikes())
                 .views(post.getViews())
-                .comments(post.getComments())
+                .comments(post.getComments()
+                        .stream()
+                        .filter(comment -> !comment.isDeleted())
+                        .map(comment -> CommentResponseDto.builder()
+                                .id(comment.getId())
+                                .content(comment.getContent())
+                                .user(UserResponseDto.builder()  // 🔥 댓글 작성자 정보 추가
+                                        .id(comment.getUser().getId())
+                                        .nickname(comment.getUser().getNickname())
+                                        .imageUrl(comment.getUser().getImageUrl())
+                                        .build())
+                                .createdAt(comment.getCreatedAt())
+                                .build())
+                        .collect(Collectors.toList()))
                 .user(UserResponseDto.builder()
                         .id(post.getUser().getId())
                         .nickname(post.getUser().getNickname())

@@ -1,5 +1,6 @@
 package com.example.community.dto.Post.Response;
 
+import com.example.community.dto.Comment.Response.CommentResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Comment;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,7 +26,7 @@ public abstract class AbstractPostResponseDto {
     protected UserResponseDto user;
 
     @Builder.Default
-    protected List<Comment> comments = new ArrayList<>();
+    protected List<CommentResponseDto> comments = new ArrayList<>();
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     protected LocalDateTime createdAt;

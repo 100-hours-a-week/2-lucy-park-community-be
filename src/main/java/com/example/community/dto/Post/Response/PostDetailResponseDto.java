@@ -1,5 +1,6 @@
 package com.example.community.dto.Post.Response;
 
+import com.example.community.dto.Comment.Response.CommentResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Comment;
 import lombok.Getter;
@@ -14,7 +15,7 @@ public class PostDetailResponseDto extends AbstractPostResponseDto {
     private String content;
     private String imageUrl;
 
-    public PostDetailResponseDto(Long id, String title, String content, String imageUrl, int likes, int views, LocalDateTime createdAt, UserResponseDto responseDto, List<Comment> comments) {
+    public PostDetailResponseDto(Long id, String title, String content, String imageUrl, int likes, int views, LocalDateTime createdAt, UserResponseDto responseDto, List<CommentResponseDto> comments) {
         super(id, title, likes, views, responseDto, comments, createdAt);
         this.content = content;
         this.imageUrl = imageUrl;

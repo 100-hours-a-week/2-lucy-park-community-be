@@ -60,5 +60,6 @@ public class Post {
 
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)  // orphanRemoval = false
+    @OrderBy("id ASC")
     private List<Comment> comments = new ArrayList<>();
 }

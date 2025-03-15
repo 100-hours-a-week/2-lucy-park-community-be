@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentUpdateRequestDto {
-    @NotBlank
-    private Long commentId;
-
     @NotBlank(message = "수정할 내용을 입력해주세요.")
     private String content;
 }
