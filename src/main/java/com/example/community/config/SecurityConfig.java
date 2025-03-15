@@ -45,8 +45,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 기능 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users", "/users/session").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**", "/upload/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users", "/users/session", "/api/image").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                         .requestMatchers("/error").permitAll() // 에러 페이지 허용
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
