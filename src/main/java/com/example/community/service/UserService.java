@@ -85,6 +85,7 @@ public class UserService {
 
 
         return UserLoginResponseDto.builder()
+                .id(user.getId())
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
                 .accessToken(accessToken)

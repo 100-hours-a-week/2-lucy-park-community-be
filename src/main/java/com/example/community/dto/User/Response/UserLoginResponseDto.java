@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class UserLoginResponseDto {
+    private Long id;
     private String nickname;
     private String imageUrl;
     private String accessToken;

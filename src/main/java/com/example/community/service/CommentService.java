@@ -2,6 +2,8 @@ package com.example.community.service;
 
 import com.example.community.dto.Comment.Request.CommentCreateRequestDto;
 import com.example.community.dto.Comment.Request.CommentUpdateRequestDto;
+import com.example.community.dto.Comment.Response.CommentResponseDto;
+import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Comment;
 import com.example.community.entity.Post;
 import com.example.community.entity.User;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,6 +35,25 @@ public class CommentService {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.jwtUtil = jwtUtil;
+    }
+
+    public List<CommentResponseDto> getComments(Long postId) {
+        return commentRepository.findAllByPostIdAndDeletedFalseOrderByCreatedAtAsc(postId)
+                .stream()
+                .map(comment -> CommentResponseDto.builder()
+                        .id(comment.getId())
+                        .content(comment.getContent())
+                        .user(UserResponseDto.builder()
+                                .id(comment.getUser().getId())
+                                .nickname(comment.getUser().getNickname())
+                                .imageUrl(comment.getUser().getImageUrl())
+                                .build())
+                        .createdAt(comment.getCreatedAt())
+                        .build()
+                )
+                .collect(Collectors.toList())
+                ;
+
     }
 
     public Comment createComment(Long postId, CommentCreateRequestDto requestDto, HttpServletRequest request) {
