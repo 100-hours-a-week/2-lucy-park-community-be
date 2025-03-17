@@ -3,6 +3,7 @@ package com.example.community.service;
 import com.example.community.dto.Comment.Response.CommentResponseDto;
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
+import com.example.community.dto.Post.Response.PostCreateResponseDto;
 import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,7 @@ public class PostService {
     }
 
     // 게시글 생성
-    public Post createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
+    public PostCreateResponseDto createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
         User user = jwtUtil.verifyUser(request);
 
         if(StringUtils.hasText(requestDto.getTitle()) && StringUtils.hasText(requestDto.getContent())) {
@@ -54,7 +56,10 @@ public class PostService {
                         .user(user)
                         .build();
                  postRepository.save(post);
-                 return post;
+
+                return PostCreateResponseDto.builder()
+                        .id(post.getId())
+                        .build();
             } else {
                 Post post = Post.builder()
                         .title(requestDto.getTitle())
@@ -62,7 +67,10 @@ public class PostService {
                         .user(user)
                         .build();
                 postRepository.save(post);
-                return post;
+
+                return PostCreateResponseDto.builder()
+                        .id(post.getId())
+                        .build();
             }
         } else {
             throw new IllegalArgumentException("글의 제목과 본문 내용을 입력해주세요.");
@@ -100,6 +108,7 @@ public class PostService {
     // 전체 게시글 조회
     public List<PostListResponseDto> readPosts() {
         return postRepository.findAllWithComments().stream()
+                .sorted(Comparator.comparing(Post::getId))
                 .map(post -> PostListResponseDto.builder()
                         .id(post.getId())
                         .title(post.getTitle())

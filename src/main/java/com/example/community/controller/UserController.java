@@ -60,7 +60,14 @@ public class UserController {
     @PatchMapping("/profile/password")
     public ResponseEntity<WrapperWithoutDataResponse> updatePassword(@Valid @RequestBody UserUpdatePasswordRequestDto requestDto, HttpServletRequest request) {
         userService.updatePassword(requestDto, request);
-        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("비밀번호 수정 성공하였습니다.");
+        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("update_password_success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/session")
+    public ResponseEntity<WrapperWithoutDataResponse> logoutUser(HttpServletRequest request) {
+        User user = userService.logoutUser(request);
+        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("logout_success");
         return ResponseEntity.ok(response);
     }
 

@@ -143,6 +143,20 @@ public class UserService {
         return user;
     }
 
+    // 로그아웃
+    public User logoutUser(HttpServletRequest request) {
+        User user = jwtUtil.verifyUser(request);
+
+        if(user.getRefreshToken() != null) {
+            user.getRefreshToken().expireToken();
+            refreshTokenRepository.save(user.getRefreshToken());
+        }
+
+        user.setRefreshToken(null);
+        userRepository.save(user);
+        return user;
+    }
+
     // 회원 탈퇴
     public User unregisterUser(HttpServletRequest request) {
         User user = jwtUtil.verifyUser(request);
