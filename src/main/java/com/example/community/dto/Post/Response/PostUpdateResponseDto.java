@@ -13,6 +13,6 @@ public class PostUpdateResponseDto {
     private final String title;
     private final String content;
     private final String imageUrl;
-    private final int likes;
-    private final int views;
+    private final int likeCount;
+    private final int viewCount;
 }

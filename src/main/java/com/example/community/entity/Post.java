@@ -34,10 +34,10 @@ public class Post {
 
     @Builder.Default
     @Column(nullable = false)
-    private int likes = 0;
+    private int likesCount = 0;
 
     @Builder.Default
-    private int views = 0;
+    private int viewsCount = 0;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -62,4 +62,7 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)  // orphanRemoval = false
     @OrderBy("id ASC")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.PERSIST)
+    private Likes likeList;
 }

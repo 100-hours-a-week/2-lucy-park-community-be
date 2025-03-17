@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @SuperBuilder
 public class PostListResponseDto extends AbstractPostResponseDto{
-    public PostListResponseDto(Long id, String title, int likes, int views, UserResponseDto responseDto, LocalDateTime createdAt, List<CommentResponseDto> comments) {
-        super(id, title, likes, views, responseDto, comments, createdAt);
+    public PostListResponseDto(Long id, String title, int likeCount, int viewCount, UserResponseDto responseDto, LocalDateTime createdAt, List<CommentResponseDto> comments) {
+        super(id, title, likeCount, viewCount, responseDto, comments, createdAt);
     }
 }

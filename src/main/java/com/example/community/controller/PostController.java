@@ -2,6 +2,7 @@ package com.example.community.controller;
 
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
+import com.example.community.dto.Post.Response.LikePostResponseDto;
 import com.example.community.dto.Post.Response.PostCreateResponseDto;
 import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
@@ -63,6 +64,14 @@ public class PostController {
                                              HttpServletRequest request) {
         postService.deletePost(postId, request);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("delete_post_success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<WrapperResponse> likePost(@PathVariable Long postId,
+                                                    HttpServletRequest request) {
+        LikePostResponseDto responseDto = postService.likePost(postId, request);
+        WrapperResponse response = new WrapperResponse<>("like_post_success", responseDto);
         return ResponseEntity.ok(response);
     }
 }

@@ -21,8 +21,8 @@ import java.util.List;
 public abstract class AbstractPostResponseDto {
     protected Long id;
     protected String title;
-    protected int likes;
-    protected int views;
+    protected int likeCount;
+    protected int viewCount;
     protected UserResponseDto user;
 
     @Builder.Default

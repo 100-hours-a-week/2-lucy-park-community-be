@@ -3,13 +3,16 @@ package com.example.community.service;
 import com.example.community.dto.Comment.Response.CommentResponseDto;
 import com.example.community.dto.Post.Request.PostCreateRequestDto;
 import com.example.community.dto.Post.Request.PostUpdateRequestDto;
+import com.example.community.dto.Post.Response.LikePostResponseDto;
 import com.example.community.dto.Post.Response.PostCreateResponseDto;
 import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
 import com.example.community.dto.User.Response.UserResponseDto;
 import com.example.community.entity.Comment;
+import com.example.community.entity.Likes;
 import com.example.community.entity.Post;
 import com.example.community.entity.User;
+import com.example.community.repository.LikesRepository;
 import com.example.community.repository.PostRepository;
 import com.example.community.repository.RefreshTokenRepository;
 import com.example.community.repository.UserRepository;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,15 +34,15 @@ import java.util.stream.Collectors;
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final LikesRepository likesRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public PostService(UserRepository userRepository, PostRepository postRepository, RefreshTokenRepository refreshTokenRepository,
+    public PostService(UserRepository userRepository, PostRepository postRepository, LikesRepository likesRepository,
                        JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.likesRepository = likesRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
     }
@@ -112,8 +116,8 @@ public class PostService {
                 .map(post -> PostListResponseDto.builder()
                         .id(post.getId())
                         .title(post.getTitle())
-                        .likes(post.getLikes())
-                        .views(post.getViews())
+                        .likeCount(post.getLikesCount())
+                        .viewCount(post.getViewsCount())
                         .user(UserResponseDto.builder()
                                 .id(post.getUser().getId())
                                 .nickname(post.getUser().getNickname())
@@ -142,14 +146,16 @@ public class PostService {
     public PostDetailResponseDto readPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        post.setViewsCount(post.getViewsCount() + 1);
+        postRepository.save(post);
 
         return PostDetailResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .imageUrl(post.getImageUrl())
-                .likes(post.getLikes())
-                .views(post.getViews())
+                .likeCount(post.getLikesCount())
+                .viewCount(post.getViewsCount())
                 .user(UserResponseDto.builder()
                         .id(post.getUser().getId())
                         .nickname(post.getUser().getNickname())
@@ -176,6 +182,49 @@ public class PostService {
         postRepository.save(post);
 
         return post;
+    }
+
+    // 게시글 좋아요
+    public LikePostResponseDto likePost(Long postId, HttpServletRequest request) {
+        User user = jwtUtil.verifyUser(request);
+
+        Likes likeList = likesRepository.findByPostId(postId);
+
+        if (likeList == null) {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+
+            likeList = Likes.builder()
+                    .post(post)
+                    .users(new ArrayList<>())
+                    .build();
+            likesRepository.save(likeList);
+        }
+
+        if(!likeList.getUsers().contains(user)) {
+            likeList.getUsers().add(user);
+            likesRepository.save(likeList);
+
+            Post post = likeList.getPost();
+            post.setLikesCount(post.getLikesCount() + 1);
+            postRepository.save(post);
+
+            return LikePostResponseDto.builder()
+                    .likeCount(post.getLikesCount())
+                    .build();
+        } else {
+            // 오히려 좋아요 취소
+            likeList.getUsers().remove(user);
+            likesRepository.save(likeList);
+
+            Post post = likeList.getPost();
+            post.setLikesCount(post.getLikesCount() - 1);
+            postRepository.save(post);
+
+            return LikePostResponseDto.builder()
+                    .likeCount(post.getLikesCount())
+                    .build();
+        }
     }
 
 }
