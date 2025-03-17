@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 기능 비활성화
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/users", "/users/session", "/api/image").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**", "/uploads/**").permitAll()
                         .requestMatchers("/error").permitAll() // 에러 페이지 허용
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )

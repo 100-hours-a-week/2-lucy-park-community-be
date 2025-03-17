@@ -2,10 +2,12 @@ package com.example.community.controller;
 
 import com.example.community.dto.User.Request.*;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
+import com.example.community.dto.User.Response.UserUpdateNicknameResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
 import com.example.community.dto.Wrapper.WrapperResponse;
 import com.example.community.dto.Wrapper.WrapperWithoutDataResponse;
 import com.example.community.entity.RefreshToken;
+import com.example.community.entity.User;
 import com.example.community.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -49,9 +51,9 @@ public class UserController {
     }
 
     @PatchMapping("/profile/nickname")
-    public ResponseEntity<WrapperWithoutDataResponse> updateNickname(@Valid @RequestBody UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
-        userService.updateNickname(requestDto, request);
-        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("닉네임 수정 성공하였습니다.");
+    public ResponseEntity<WrapperResponse> updateNickname(@Valid @RequestBody UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
+        UserUpdateNicknameResponseDto userUpdateNicknameResponseDto = userService.updateNickname(requestDto, request);
+        WrapperResponse response = new WrapperResponse("update_nickname_success", userUpdateNicknameResponseDto);
         return ResponseEntity.ok(response);
     }
 
@@ -60,5 +62,12 @@ public class UserController {
         userService.updatePassword(requestDto, request);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("비밀번호 수정 성공하였습니다.");
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/profile/session")
+    public ResponseEntity<WrapperWithoutDataResponse> unregisterUser(HttpServletRequest request) {
+        User user = userService.unregisterUser(request);
+        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("회원 탈퇴 성공");
+        return  ResponseEntity.ok(response);
     }
 }

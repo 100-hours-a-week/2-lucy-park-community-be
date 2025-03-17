@@ -9,6 +9,7 @@ import lombok.Getter;
 @Builder
 public class UserLoginResponseDto {
     private Long id;
+    private String email;
     private String nickname;
     private String imageUrl;
     private String accessToken;

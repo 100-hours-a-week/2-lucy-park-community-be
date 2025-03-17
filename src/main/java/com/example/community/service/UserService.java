@@ -2,9 +2,14 @@ package com.example.community.service;
 
 import com.example.community.dto.User.Request.*;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
+import com.example.community.dto.User.Response.UserUpdateNicknameResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
+import com.example.community.entity.Comment;
+import com.example.community.entity.Post;
 import com.example.community.entity.RefreshToken;
 import com.example.community.entity.User;
+import com.example.community.repository.CommentRepository;
+import com.example.community.repository.PostRepository;
 import com.example.community.repository.RefreshTokenRepository;
 import com.example.community.repository.UserRepository;
 import com.example.community.security.JwtAuthenticationFilter;
@@ -15,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,13 +28,21 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtUtil jwtUtil,
+    public UserService(UserRepository userRepository,
+                       RefreshTokenRepository refreshTokenRepository,
+                       PostRepository postRepository,
+                       CommentRepository commentRepository,
+                       JwtUtil jwtUtil,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
     }
@@ -86,6 +100,7 @@ public class UserService {
 
         return UserLoginResponseDto.builder()
                 .id(user.getId())
+                .email(user.getEmail())
                 .nickname(user.getNickname())
                 .imageUrl(user.getImageUrl())
                 .accessToken(accessToken)
@@ -106,13 +121,15 @@ public class UserService {
     }
 
     //
-    public User updateNickname(UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
+    public UserUpdateNicknameResponseDto updateNickname(UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
 
         User user = jwtUtil.verifyUser(request);
         if(requestDto.getNickname() != null) {
             user.setNickname(requestDto.getNickname());
         }
-        return user;
+        return UserUpdateNicknameResponseDto.builder()
+                .nickname(user.getNickname())
+                .build();
     }
 
     // 비밀번호
@@ -124,5 +141,31 @@ public class UserService {
             user.setPassword(encodedPassword);
         }
         return user;
+    }
+
+    // 회원 탈퇴
+    public User unregisterUser(HttpServletRequest request) {
+        User user = jwtUtil.verifyUser(request);
+        Long userId = user.getId();
+
+        long expectedCommentCount = commentRepository.countByUserIdAndDeletedFalse(userId);
+        long expectedPostCount = postRepository.countByUserIdAndDeletedFalse(userId);
+
+        try {
+            int deletedComments = commentRepository.softDeletedCommentsByUserId(userId);
+            int deletedPosts = postRepository.softDeletedPostsByUserId(userId);
+
+            if(deletedComments != expectedCommentCount) {
+                throw new RuntimeException("댓글 삭제 처리 과정에서 오류가 발생하였습니다.");
+            }
+            if(deletedPosts != expectedPostCount) {
+                throw new RuntimeException("게시글 삭제 처리 과정에서 오류가 발생하였습니다.");
+            }
+            user.setDeleted(true);
+            userRepository.save(user);
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException("회원 탈퇴 처리 중 예외가 발생하였습니다.", e);
+        }
     }
 }

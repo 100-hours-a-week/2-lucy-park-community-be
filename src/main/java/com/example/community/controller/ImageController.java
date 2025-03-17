@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Slf4j
 public class ImageController {
 
-    private static final String UPLOAD_DIR = "/uploads/";
+    private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
     @PostMapping("/image")
     public ResponseEntity<?> uploadImage(@RequestParam("imageFile") MultipartFile imageFile,
@@ -34,8 +35,8 @@ public class ImageController {
             String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String storedFilename = "thumbnail_" + UUID.randomUUID() + extension;
 
-            // 저장 경로를 /uploads 디렉토리로 설정
-            Path uploadPath = Path.of("src/main/resources/static/uploads").toAbsolutePath().normalize();
+            // 저장 경로를 "user.dir/uploads" 로 설정
+            Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
