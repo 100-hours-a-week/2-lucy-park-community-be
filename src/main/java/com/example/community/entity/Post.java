@@ -63,6 +63,5 @@ public class Post {
     @OrderBy("id ASC")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.PERSIST)
-    private Likes likeList;
+
 }

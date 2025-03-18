@@ -32,7 +32,7 @@ public class UserController {
     public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody UserSigninRequestDto requestDto) {
         userService.registerUser(requestDto);
         Map<String, String> response = new HashMap<>();
-        response.put("message", "회원가입에 성공하였습니다.");
+        response.put("message", "register_success");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

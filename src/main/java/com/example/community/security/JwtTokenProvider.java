@@ -43,7 +43,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // 🔹 JWT 검증
+    // JWT 검증
     public boolean validateToken(String token) {
         try {
             System.out.println("🔍 검증 시작: " + token);
