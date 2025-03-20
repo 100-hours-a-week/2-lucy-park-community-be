@@ -17,6 +17,7 @@ public class RefreshToken {
     @Column(nullable = false, unique = true, columnDefinition = "MEDIUMTEXT")
     private String token;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean expired = false;
 
