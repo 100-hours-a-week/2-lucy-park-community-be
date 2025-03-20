@@ -16,6 +16,7 @@ import com.example.community.security.JwtAuthenticationFilter;
 import com.example.community.security.JwtTokenProvider;
 import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -32,20 +34,6 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository,
-                       RefreshTokenRepository refreshTokenRepository,
-                       PostRepository postRepository,
-                       CommentRepository commentRepository,
-                       JwtUtil jwtUtil,
-                       PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-        this.jwtUtil = jwtUtil;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -108,11 +96,12 @@ public class UserService {
     }
 
     // 회원 프로필 사진 수정
-    public UserUpdateProfileImageResponseDto updateProfileImage(UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
+    public UserUpdateProfileImageResponseDto updateProfileImage(UserUpdateProfileImageRequestDto requestDto) {
 
-        User user = jwtUtil.verifyUser(request);
+        User user = jwtUtil.verifyUser();
         if(requestDto.getImageUrl() != null) {
             user.setImageUrl(requestDto.getImageUrl());
+            userRepository.save(user);
         }
 
         return UserUpdateProfileImageResponseDto.builder()
@@ -121,11 +110,12 @@ public class UserService {
     }
 
     //
-    public UserUpdateNicknameResponseDto updateNickname(UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
+    public UserUpdateNicknameResponseDto updateNickname(UserUpdateNicknameRequestDto requestDto) {
 
-        User user = jwtUtil.verifyUser(request);
+        User user = jwtUtil.verifyUser();
         if(requestDto.getNickname() != null) {
             user.setNickname(requestDto.getNickname());
+            userRepository.save(user);
         }
         return UserUpdateNicknameResponseDto.builder()
                 .nickname(user.getNickname())
@@ -133,19 +123,20 @@ public class UserService {
     }
 
     // 비밀번호
-    public User updatePassword(UserUpdatePasswordRequestDto requestDto, HttpServletRequest request) {
+    public User updatePassword(UserUpdatePasswordRequestDto requestDto) {
 
-        User user = jwtUtil.verifyUser(request);
+        User user = jwtUtil.verifyUser();
         if(requestDto.getPassword() != null) {
             String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
             user.setPassword(encodedPassword);
+            userRepository.save(user);
         }
         return user;
     }
 
     // 로그아웃
-    public User logoutUser(HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public User logoutUser() {
+        User user = jwtUtil.verifyUser();
 
         if(user.getRefreshToken() != null) {
             user.getRefreshToken().expireToken();
@@ -158,8 +149,8 @@ public class UserService {
     }
 
     // 회원 탈퇴
-    public User unregisterUser(HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public User unregisterUser() {
+        User user = jwtUtil.verifyUser();
         Long userId = user.getId();
 
         long expectedCommentCount = commentRepository.countByUserIdAndDeletedFalse(userId);

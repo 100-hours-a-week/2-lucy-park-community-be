@@ -44,36 +44,36 @@ public class UserController {
     }
 
     @PatchMapping("/profile/image")
-    public ResponseEntity<WrapperResponse> updateProfileImage(@Valid @RequestBody UserUpdateProfileImageRequestDto requestDto, HttpServletRequest request) {
-        UserUpdateProfileImageResponseDto userUpdateProfileImageResponseDto = userService.updateProfileImage(requestDto, request);
+    public ResponseEntity<WrapperResponse> updateProfileImage(@Valid @RequestBody UserUpdateProfileImageRequestDto requestDto) {
+        UserUpdateProfileImageResponseDto userUpdateProfileImageResponseDto = userService.updateProfileImage(requestDto);
         WrapperResponse response = new WrapperResponse("update_profile_image_success", userUpdateProfileImageResponseDto);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/profile/nickname")
-    public ResponseEntity<WrapperResponse> updateNickname(@Valid @RequestBody UserUpdateNicknameRequestDto requestDto, HttpServletRequest request) {
-        UserUpdateNicknameResponseDto userUpdateNicknameResponseDto = userService.updateNickname(requestDto, request);
+    public ResponseEntity<WrapperResponse> updateNickname(@Valid @RequestBody UserUpdateNicknameRequestDto requestDto) {
+        UserUpdateNicknameResponseDto userUpdateNicknameResponseDto = userService.updateNickname(requestDto);
         WrapperResponse response = new WrapperResponse("update_nickname_success", userUpdateNicknameResponseDto);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/profile/password")
-    public ResponseEntity<WrapperWithoutDataResponse> updatePassword(@Valid @RequestBody UserUpdatePasswordRequestDto requestDto, HttpServletRequest request) {
-        userService.updatePassword(requestDto, request);
+    public ResponseEntity<WrapperWithoutDataResponse> updatePassword(@Valid @RequestBody UserUpdatePasswordRequestDto requestDto) {
+        userService.updatePassword(requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("update_password_success");
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/session")
-    public ResponseEntity<WrapperWithoutDataResponse> logoutUser(HttpServletRequest request) {
-        User user = userService.logoutUser(request);
+    public ResponseEntity<WrapperWithoutDataResponse> logoutUser() {
+        User user = userService.logoutUser();
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("logout_success");
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/profile/session")
-    public ResponseEntity<WrapperWithoutDataResponse> unregisterUser(HttpServletRequest request) {
-        User user = userService.unregisterUser(request);
+    public ResponseEntity<WrapperWithoutDataResponse> unregisterUser() {
+        User user = userService.unregisterUser();
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("회원 탈퇴 성공");
         return  ResponseEntity.ok(response);
     }

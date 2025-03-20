@@ -56,8 +56,8 @@ public class CommentService {
 
     }
 
-    public Comment createComment(Long postId, CommentCreateRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public Comment createComment(Long postId, CommentCreateRequestDto requestDto) {
+        User user = jwtUtil.verifyUser();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
@@ -71,8 +71,8 @@ public class CommentService {
         return comment;
     }
 
-    public Comment updateComment(Long postId, Long commentId, CommentUpdateRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public Comment updateComment(Long postId, Long commentId, CommentUpdateRequestDto requestDto) {
+        User user = jwtUtil.verifyUser();
 
         Comment comment = commentRepository.findCommentByIdAndPostId(commentId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
@@ -86,8 +86,8 @@ public class CommentService {
         return comment;
     }
 
-    public Comment deleteComment(Long postId, Long commentId, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public Comment deleteComment(Long postId, Long commentId) {
+        User user = jwtUtil.verifyUser();
 
         Comment comment = commentRepository.findCommentByIdAndPostId(commentId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));

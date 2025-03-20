@@ -31,7 +31,7 @@ public class JwtTokenProvider {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // 🔥 Base64로 인코딩된 공개키를 PublicKey 객체로 변환
+    // Base64로 인코딩된 공개키를 PublicKey 객체로 변환
     private PublicKey loadPublicKey(String base64PublicKey) {
         try {
             byte[] keyBytes = Base64.getDecoder().decode(base64PublicKey);

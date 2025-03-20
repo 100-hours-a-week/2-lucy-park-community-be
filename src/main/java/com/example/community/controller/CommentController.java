@@ -34,8 +34,8 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<WrapperWithoutDataResponse> createComment(@PathVariable Long postId,
-                                               @Valid @RequestBody CommentCreateRequestDto requestDto, HttpServletRequest request) {
-        Comment comment = commentService.createComment(postId, requestDto, request);
+                                               @Valid @RequestBody CommentCreateRequestDto requestDto) {
+        Comment comment = commentService.createComment(postId, requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("add_comment_success");
         return ResponseEntity.ok(response);
     }
@@ -43,17 +43,16 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public ResponseEntity<WrapperWithoutDataResponse> updateComment(@PathVariable Long postId,
                                                 @PathVariable Long commentId,
-                                                @Valid @RequestBody CommentUpdateRequestDto requestDto, HttpServletRequest request) {
-        Comment comment = commentService.updateComment(postId, commentId, requestDto, request);
+                                                @Valid @RequestBody CommentUpdateRequestDto requestDto) {
+        Comment comment = commentService.updateComment(postId, commentId, requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("edit_comment_success");
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<WrapperWithoutDataResponse> updateComment(@PathVariable Long postId,
-                                                @PathVariable Long commentId,
-                                                HttpServletRequest request) {
-        Comment comment = commentService.deleteComment(postId, commentId, request);
+                                                @PathVariable Long commentId) {
+        Comment comment = commentService.deleteComment(postId, commentId);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("delete_comment_success");
         return ResponseEntity.ok(response);
     }

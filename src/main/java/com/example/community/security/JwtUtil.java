@@ -5,6 +5,8 @@ import com.example.community.repository.UserRepository;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -76,17 +78,13 @@ public class JwtUtil {
     }
 
     // 회원 조회
-    public User verifyUser(HttpServletRequest request) {
-
-        String token = jwtAuthenticationFilter.resolveToken(request);
-        if (token == null || !jwtTokenProvider.validateToken(token)) {
-            throw new RuntimeException("❌ 유효하지 않은 JWT 토큰입니다.");
+    public User verifyUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("인증된 사용자가 아닙니다.");
         }
 
-        Long userId = jwtTokenProvider.getUserIdFromToken(token);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        User user = (User) authentication.getPrincipal();
 
         return user;
     }

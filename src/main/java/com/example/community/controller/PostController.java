@@ -39,15 +39,15 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<WrapperResponse> createPost(@Valid @RequestBody PostCreateRequestDto requestDto, HttpServletRequest request) {
-        PostCreateResponseDto responseDto = postService.createPost(requestDto, request);
+    public ResponseEntity<WrapperResponse> createPost(@Valid @RequestBody PostCreateRequestDto requestDto) {
+        PostCreateResponseDto responseDto = postService.createPost(requestDto);
         WrapperResponse response = new WrapperResponse("create_post_success", responseDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<WrapperWithoutDataResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostUpdateRequestDto requestDto, HttpServletRequest request) {
-        Post post = postService.updatePost(postId, requestDto, request);
+    public ResponseEntity<WrapperWithoutDataResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostUpdateRequestDto requestDto) {
+        Post post = postService.updatePost(postId, requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("update_post_success");
         return ResponseEntity.ok(response);
     }
@@ -60,17 +60,15 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<WrapperWithoutDataResponse> deletePost(@PathVariable Long postId,
-                                             HttpServletRequest request) {
-        postService.deletePost(postId, request);
+    public ResponseEntity<WrapperWithoutDataResponse> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("delete_post_success");
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<WrapperResponse> likePost(@PathVariable Long postId,
-                                                    HttpServletRequest request) {
-        LikePostResponseDto responseDto = postService.likePost(postId, request);
+    public ResponseEntity<WrapperResponse> likePost(@PathVariable Long postId) {
+        LikePostResponseDto responseDto = postService.likePost(postId);
         WrapperResponse response = new WrapperResponse<>("like_post_success", responseDto);
         return ResponseEntity.ok(response);
     }

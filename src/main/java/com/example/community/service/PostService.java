@@ -45,8 +45,8 @@ public class PostService {
     }
 
     // 게시글 생성
-    public PostCreateResponseDto createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public PostCreateResponseDto createPost(PostCreateRequestDto requestDto) {
+        User user = jwtUtil.verifyUser();
 
         if(StringUtils.hasText(requestDto.getTitle()) && StringUtils.hasText(requestDto.getContent())) {
             if (requestDto.getImageUrl() != null) {
@@ -79,8 +79,8 @@ public class PostService {
     }
 
     // 게시글 수정
-    public Post updatePost(Long postId, PostUpdateRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public Post updatePost(Long postId, PostUpdateRequestDto requestDto) {
+        User user = jwtUtil.verifyUser();
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
@@ -163,8 +163,8 @@ public class PostService {
     }
 
     // 게시글 삭제
-    public Post deletePost(Long postId, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public Post deletePost(Long postId) {
+        User user = jwtUtil.verifyUser();
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -182,8 +182,8 @@ public class PostService {
     }
 
     // 게시글 좋아요 / 취소
-    public LikePostResponseDto likePost(Long postId, HttpServletRequest request) {
-        User user = jwtUtil.verifyUser(request);
+    public LikePostResponseDto likePost(Long postId) {
+        User user = jwtUtil.verifyUser();
 
         Post post = postRepository.findById(postId)
                     .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
