@@ -11,6 +11,7 @@ import com.example.community.entity.User;
 import com.example.community.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-
     @PostMapping
-    public ResponseEntity<Map<String, String>> registerUser(@Valid @RequestBody UserSigninRequestDto requestDto) {
+    public ResponseEntity<WrapperWithoutDataResponse> registerUser(@Valid @RequestBody UserSigninRequestDto requestDto) {
         userService.registerUser(requestDto);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "register_success");
+        WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("register_success");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

@@ -16,6 +16,7 @@ import com.example.community.security.JwtAuthenticationFilter;
 import com.example.community.security.JwtTokenProvider;
 import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,12 +36,8 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
     // 회원가입
-    public User registerUser(UserSigninRequestDto requestDto) {
+    public User registerUser(@Valid UserSigninRequestDto requestDto) {
         if(userRepository.existsByEmail(requestDto.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
@@ -63,7 +60,7 @@ public class UserService {
     }
 
     // 로그인
-    public UserLoginResponseDto loginUser(UserLoginRequestDto requestDto) {
+    public UserLoginResponseDto loginUser(@Valid UserLoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이용자입니다."));
 
@@ -96,7 +93,7 @@ public class UserService {
     }
 
     // 회원 프로필 사진 수정
-    public UserUpdateProfileImageResponseDto updateProfileImage(UserUpdateProfileImageRequestDto requestDto) {
+    public UserUpdateProfileImageResponseDto updateProfileImage(@Valid UserUpdateProfileImageRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
         if(requestDto.getImageUrl() != null) {
@@ -110,7 +107,7 @@ public class UserService {
     }
 
     //
-    public UserUpdateNicknameResponseDto updateNickname(UserUpdateNicknameRequestDto requestDto) {
+    public UserUpdateNicknameResponseDto updateNickname(@Valid UserUpdateNicknameRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
         if(requestDto.getNickname() != null) {
@@ -123,7 +120,7 @@ public class UserService {
     }
 
     // 비밀번호
-    public User updatePassword(UserUpdatePasswordRequestDto requestDto) {
+    public User updatePassword(@Valid UserUpdatePasswordRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
         if(requestDto.getPassword() != null) {

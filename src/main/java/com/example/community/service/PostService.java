@@ -16,6 +16,8 @@ import com.example.community.repository.PostRepository;
 import com.example.community.repository.UserRepository;
 import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
@@ -35,17 +38,8 @@ public class PostService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public PostService(UserRepository userRepository, PostRepository postRepository, LikeRepository likeRepository,
-                       JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.likeRepository = likeRepository;
-        this.jwtUtil = jwtUtil;
-        this.passwordEncoder = passwordEncoder;
-    }
-
     // 게시글 생성
-    public PostCreateResponseDto createPost(PostCreateRequestDto requestDto) {
+    public PostCreateResponseDto createPost(@Valid PostCreateRequestDto requestDto) {
         User user = jwtUtil.verifyUser();
 
         if(StringUtils.hasText(requestDto.getTitle()) && StringUtils.hasText(requestDto.getContent())) {
@@ -79,7 +73,7 @@ public class PostService {
     }
 
     // 게시글 수정
-    public Post updatePost(Long postId, PostUpdateRequestDto requestDto) {
+    public Post updatePost(Long postId, @Valid PostUpdateRequestDto requestDto) {
         User user = jwtUtil.verifyUser();
 
         Post post = postRepository.findById(postId)

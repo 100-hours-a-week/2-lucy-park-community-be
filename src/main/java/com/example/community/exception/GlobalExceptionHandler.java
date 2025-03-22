@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,6 +27,12 @@ public class GlobalExceptionHandler {
     }
 
     // 400 Bad Request - JSON 요청 오류 또는 RequestBody 누락
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "지원하지 않는 Content-Type입니다.");
+    }
+
+    // 400 Bad Request - JSON 요청 오류 또는 RequestBody 누락
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, String>> handleJsonParseException(HttpMessageNotReadableException e) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, "잘못된 요청입니다. 요청 바디(JSON)가 존재하는지 확인하세요.");
@@ -34,7 +41,7 @@ public class GlobalExceptionHandler {
     // 400 Bad Request - @Valid 검증 실패
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        String errorMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
         return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessage);
     }
 

@@ -13,6 +13,8 @@ import com.example.community.repository.RefreshTokenRepository;
 import com.example.community.repository.UserRepository;
 import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +25,12 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
-
-    public CommentService(UserRepository userRepository, PostRepository postRepository,
-                          CommentRepository commentRepository, JwtUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-        this.jwtUtil = jwtUtil;
-    }
 
     public List<CommentResponseDto> getComments(Long postId) {
         return commentRepository.findAllByPostIdAndDeletedFalseOrderByCreatedAtAsc(postId)
@@ -56,7 +51,7 @@ public class CommentService {
 
     }
 
-    public Comment createComment(Long postId, CommentCreateRequestDto requestDto) {
+    public Comment createComment(Long postId, @Valid CommentCreateRequestDto requestDto) {
         User user = jwtUtil.verifyUser();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
@@ -71,7 +66,7 @@ public class CommentService {
         return comment;
     }
 
-    public Comment updateComment(Long postId, Long commentId, CommentUpdateRequestDto requestDto) {
+    public Comment updateComment(Long postId, Long commentId, @Valid CommentUpdateRequestDto requestDto) {
         User user = jwtUtil.verifyUser();
 
         Comment comment = commentRepository.findCommentByIdAndPostId(commentId, postId)
