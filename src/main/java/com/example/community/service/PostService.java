@@ -43,30 +43,24 @@ public class PostService {
         User user = jwtUtil.verifyUser();
 
         if(StringUtils.hasText(requestDto.getTitle()) && StringUtils.hasText(requestDto.getContent())) {
-            if (requestDto.getImageUrl() != null) {
-                 Post post = Post.builder()
-                        .title(requestDto.getTitle())
-                        .content(requestDto.getContent())
-                        .imageUrl(requestDto.getImageUrl())
-                        .user(user)
-                        .build();
-                 postRepository.save(post);
 
-                return PostCreateResponseDto.builder()
-                        .id(post.getId())
-                        .build();
-            } else {
-                Post post = Post.builder()
-                        .title(requestDto.getTitle())
-                        .content(requestDto.getContent())
-                        .user(user)
-                        .build();
-                postRepository.save(post);
+            Post.PostBuilder builder = Post.builder()
+                    .title(requestDto.getTitle())
+                    .content(requestDto.getContent())
+                    .user(user);
 
-                return PostCreateResponseDto.builder()
-                        .id(post.getId())
-                        .build();
+            if (StringUtils.hasText(requestDto.getImageUrl())) {
+                builder.imageUrl(requestDto.getImageUrl());
             }
+
+            Post post = builder.build();
+
+            postRepository.save(post);
+
+
+            return PostCreateResponseDto.builder()
+                    .id(post.getId())
+                    .build();
         } else {
             throw new IllegalArgumentException("글의 제목과 본문 내용을 입력해주세요.");
         }
@@ -114,21 +108,7 @@ public class PostService {
                                 .nickname(post.getUser().getNickname())
                                 .imageUrl(post.getUser().getImageUrl())
                                 .build())
-                        .comments(post.getComments()
-                                .stream()
-                                .filter(comment -> !comment.isDeleted())
-                                .map(comment -> CommentResponseDto.builder()
-                                        .id(comment.getId())
-                                        .content(comment.getContent())
-                                        .user(UserResponseDto.builder()  // 🔥 댓글 작성자 정보 추가
-                                                .id(comment.getUser().getId())
-                                                .nickname(comment.getUser().getNickname())
-                                                .imageUrl(comment.getUser().getImageUrl())
-                                                .build())
-                                        .createdAt(comment.getCreatedAt())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .createdAt(post.getCreatedAt())
+                        .commentCount(post.getComments().size())
                         .build())
                 .collect(Collectors.toList());
     }

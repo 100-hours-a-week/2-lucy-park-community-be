@@ -40,20 +40,21 @@ public class UpdateProfileImageTest {
 
     @Test
     @DisplayName("프로필 이미지 변경 성공 - 성공적으로 200 반환")
-    void updateProfileIamgeTest_success() throws Exception {
+    void updateProfileImageTest_success() throws Exception {
         UserUpdateProfileImageResponseDto responseDto = new UserUpdateProfileImageResponseDto("/uploads/thumbnail_another_image.jpg");
 
         mockMvc.perform(patch("/users/profile/image")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(responseDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$message").value("update_profile_image_success"));
 
         verify(userService, times(1)).updateProfileImage(any());
     }
 
     @Test
     @DisplayName("프로필 이미지 변경 실패 - 잘못된 이미지 형식")
-    void updateProfileIamgeTest_invalidImageUrl() throws Exception {
+    void updateProfileImageTest_invalidImageUrl() throws Exception {
         UserUpdateProfileImageResponseDto responseDto = new UserUpdateProfileImageResponseDto("invalid_imageUrl");
 
         mockMvc.perform(patch("/users/profile/image")

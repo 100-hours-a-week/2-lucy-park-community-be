@@ -14,7 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 public class PostListResponseDto extends AbstractPostResponseDto{
-    public PostListResponseDto(Long id, String title, int likeCount, int viewCount, UserResponseDto responseDto, LocalDateTime createdAt, List<CommentResponseDto> comments) {
-        super(id, title, likeCount, viewCount, responseDto, comments, createdAt);
+    private int commentCount;
+
+    public PostListResponseDto(Long id, String title, int likeCount, int viewCount, UserResponseDto responseDto, LocalDateTime createdAt, int commentCount ) {
+        super(id, title, likeCount, viewCount, responseDto, createdAt);
+        this.commentCount = commentCount;
     }
 }

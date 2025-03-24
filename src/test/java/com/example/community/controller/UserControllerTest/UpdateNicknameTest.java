@@ -46,7 +46,8 @@ public class UpdateNicknameTest {
         mockMvc.perform(patch("/users/profile/nickname")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("update_nickname_success"));
 
         verify(userService, times(1)).updateNickname(any());
     }

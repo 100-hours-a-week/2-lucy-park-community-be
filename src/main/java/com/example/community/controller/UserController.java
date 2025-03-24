@@ -6,18 +6,13 @@ import com.example.community.dto.User.Response.UserUpdateNicknameResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
 import com.example.community.dto.Wrapper.WrapperResponse;
 import com.example.community.dto.Wrapper.WrapperWithoutDataResponse;
-import com.example.community.entity.RefreshToken;
 import com.example.community.entity.User;
 import com.example.community.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<WrapperWithoutDataResponse> registerUser(@Valid @RequestBody UserSigninRequestDto requestDto) {
+    public ResponseEntity<WrapperWithoutDataResponse> registerUser(@Valid @RequestBody UserRegisterRequestDto requestDto) {
         userService.registerUser(requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("register_success");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

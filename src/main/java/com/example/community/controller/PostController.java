@@ -6,22 +6,17 @@ import com.example.community.dto.Post.Response.LikePostResponseDto;
 import com.example.community.dto.Post.Response.PostCreateResponseDto;
 import com.example.community.dto.Post.Response.PostDetailResponseDto;
 import com.example.community.dto.Post.Response.PostListResponseDto;
-import com.example.community.dto.User.Request.UserSigninRequestDto;
 import com.example.community.dto.Wrapper.WrapperResponse;
 import com.example.community.dto.Wrapper.WrapperWithoutDataResponse;
 import com.example.community.entity.Post;
 import com.example.community.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

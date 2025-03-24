@@ -25,9 +25,6 @@ public abstract class AbstractPostResponseDto {
     protected int viewCount;
     protected UserResponseDto user;
 
-    @Builder.Default
-    protected List<CommentResponseDto> comments = new ArrayList<>();
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     protected LocalDateTime createdAt;
 }

@@ -21,5 +21,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     int softDeletedCommentsByUserId(@Param("userId") Long userId);
 
     @Query("SELECT Count(c) FROM Comment c WHERE c.user.id = :userId AND c.deleted = false")
-    Long countByUserIdAndDeletedFalse(@Param("userId") Long userId);
+    int countByUserIdAndDeletedFalse(@Param("userId") Long userId);
 }

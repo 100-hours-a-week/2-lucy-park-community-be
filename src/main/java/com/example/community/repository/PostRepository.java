@@ -27,5 +27,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     int softDeletedPostsByUserId(@Param("userId") Long userId);
 
     @Query("SELECT COUNT(p) FROM Post p WHERE p.user.id = :userId AND p.deleted = false")
-    Long countByUserIdAndDeletedFalse(@Param("userId") Long userId);
+    int countByUserIdAndDeletedFalse(@Param("userId") Long userId);
 }

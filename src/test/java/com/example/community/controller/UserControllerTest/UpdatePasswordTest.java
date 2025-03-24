@@ -44,9 +44,10 @@ public class UpdatePasswordTest {
         UserUpdatePasswordRequestDto requestDto = new UserUpdatePasswordRequestDto("UpdatedPassword*");
 
         mockMvc.perform(patch("/users/profile/password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDto)))
-                .andExpect(status().isOk());
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("update_password_success"));
 
         verify(userService, times(1)).updatePassword(any());
     }
