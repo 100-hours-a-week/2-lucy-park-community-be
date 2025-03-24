@@ -11,6 +11,7 @@ import com.example.community.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class CommentController {
                                                @Valid @RequestBody CommentCreateRequestDto requestDto) {
         Comment comment = commentService.createComment(postId, requestDto);
         WrapperWithoutDataResponse response = new WrapperWithoutDataResponse("add_comment_success");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PatchMapping("/{commentId}")

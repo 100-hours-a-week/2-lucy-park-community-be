@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CommentService {
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
