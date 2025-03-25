@@ -7,7 +7,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -82,5 +81,86 @@ public class PostRepositoryTest {
         assertThat(result.getFirst().getComments())
                 .extracting(Comment::getContent)
                 .containsExactlyInAnyOrder("Comment 1", "Comment 2");
+    }
+
+    @Test
+    @DisplayName("삭제되지 않았던 게시글만 모두 삭제 처리")
+    void should_ChangeStatusAllPostDeleted_WhenNotDeleted() {
+
+        User user = User.builder()
+                .email("example@email.com")
+                .password("Password**")
+                .nickname("textuser")
+                .imageUrl("/uploads/thumbnail_123456789")
+                .build();
+
+        em.persist(user);
+
+        Post post1 = Post.builder()
+                .title("Post 1")
+                .content("Content 1")
+                .user(user)
+                .deleted(false)
+                .build();
+        Post post2 = Post.builder()
+                .title("Post 2")
+                .content("Content 2")
+                .user(user)
+                .deleted(true)
+                .build();
+
+        em.persist(post1);
+        em.persist(post2);
+
+        em.flush();
+        em.clear();
+
+        int deletedPostCount = postRepository.softDeletedPostsByUserId(user.getId());
+
+        assertThat(deletedPostCount).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("유저의 삭제되지 않은 모든 게시글 조회")
+    void should_ReadAllPostsOfUser_WhenNotDeleted() {
+
+        User user = User.builder()
+                .email("example@email.com")
+                .password("Password**")
+                .nickname("textuser")
+                .imageUrl("/uploads/thumbnail_123456789")
+                .build();
+
+        em.persist(user);
+
+        Post post1 = Post.builder()
+                .title("Post 1")
+                .content("Content 1")
+                .user(user)
+                .deleted(false)
+                .build();
+        Post post2 = Post.builder()
+                .title("Post 2")
+                .content("Content 2")
+                .user(user)
+                .deleted(true)
+                .build();
+        Post post3 = Post.builder()
+                .title("Post 3")
+                .content("Content 3")
+                .user(user)
+                .deleted(false)
+                .build();
+
+        em.persist(post1);
+        em.persist(post2);
+        em.persist(post3);
+
+        em.flush();
+        em.clear();
+
+        int unDeletedPostCount = postRepository.countByUserIdAndDeletedFalse(user.getId());
+
+        assertThat(unDeletedPostCount).isEqualTo(2);
     }
 }
