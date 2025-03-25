@@ -28,7 +28,7 @@ public class Comment {
     private LocalDateTime createdAt;
 
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @ManyToOne

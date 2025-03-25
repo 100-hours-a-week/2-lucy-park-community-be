@@ -16,8 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,5 +52,20 @@ public class CreateCommentTest {
                 .andExpect(jsonPath("$.message").value("add_comment_success"));
 
         verify(commentService, times(1)).createComment(eq(1L), refEq(requestDto));
+    }
+
+    @Test
+    @DisplayName("댓글 작성 실패 - 댓글 내용 형식 오류")
+    void createComment_InvalidContent() throws Exception {
+        CommentCreateRequestDto requestDto = CommentCreateRequestDto.builder()
+                .content("")
+                .build();
+
+        mockMvc.perform(post("/posts/1/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isBadRequest());
+
+        verify(commentService, never()).createComment(eq(1L), refEq(requestDto));
     }
 }

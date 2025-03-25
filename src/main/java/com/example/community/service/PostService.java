@@ -75,7 +75,7 @@ public class PostService {
 
         // 프론트에서도 예외 처리 필요
         if (!post.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("게시글을 수정할 권한이 없습니다.");
+            throw new SecurityException("게시글 수정 권한이 없습니다.");
         }
 
         if(StringUtils.hasText(requestDto.getTitle())) {
@@ -116,7 +116,7 @@ public class PostService {
     // 게시글 상세 조회
     public PostDetailResponseDto readPost(Long postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         post.setViewsCount(post.getViewsCount() + 1);
         postRepository.save(post);
 
@@ -141,7 +141,7 @@ public class PostService {
         User user = jwtUtil.verifyUser();
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         // 마찬가지로 프론트엔드에서도 처리 필요
         if(!post.getUser().getId().equals(user.getId())) {
