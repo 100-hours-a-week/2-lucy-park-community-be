@@ -63,7 +63,8 @@ Spring Boot는 해커톤 이후 두 번째로 접해보는 프레임워크였기
 |------|------------|----------|-------|
 | Controller | 전체 | 전체 (DTO 없는 메서드 제외) | 구현 완료 |
 | Service | 전체 | 일부 로직 없는 메서드 제외 | 구현 완료 |
-| Repository | Post, Comment | @Query 사용 메서드 | 구현 완료 |  
+| Repository | Post, Comment | @Query 사용 메서드 | 구현 완료 |
+
 ⠀  
 
 ### 통합 테스트
@@ -78,9 +79,9 @@ Spring Boot는 해커톤 이후 두 번째로 접해보는 프레임워크였기
 | Controller | 유효성, 응답, 서비스 호출 | `@WebMvcTest`, `MockMvc` |
 | Service | 로직 (중복 검사, 암호화 등) | `@ExtendWith(MockitoExtension.class)` |
 | Repository | 커스텀 쿼리 | `@DataJpaTest` + `EntityManager` |
-| 통합 흐름 | 로그인→글쓰기→로그아웃 | `@SpringBootTest` |  
-⠀  
+| 통합 흐름 | 로그인→글쓰기→로그아웃 | `@SpringBootTest` |
 
+⠀  
 
 ### 컨트롤러 테스트에 대해 알게된 점
 - `MockMvc`, `ObjectMapper`, `@MockBean`, `verify()` 등 사용법 숙지
@@ -111,9 +112,9 @@ Spring Boot는 해커톤 이후 두 번째로 접해보는 프레임워크였기
 | `controller` | 46% | **2순위**: 요청/응답 흐름 테스트 필요 |
 | `security` | 88% | **분기 보완 필요** |
 | `exception` | 56% | 3순위: 예외 흐름 처리 강화 |
-| `entity`, `dto`, `config` | 16% ~ 100% | 테스트 우선순위 낮음 또는 유지 대상 |  
-⠀  
+| `entity`, `dto`, `config` | 16% ~ 100% | 테스트 우선순위 낮음 또는 유지 대상 |
 
+⠀  
 
 ## 🤖 GitHub Actions 통한 커버리지 PR 등록 설정 (예정)
 ⠀  
