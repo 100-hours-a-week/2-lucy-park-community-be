@@ -1,7 +1,7 @@
 package com.example.community.controller.UserControllerTest;
 
 import com.example.community.controller.UserController;
-import com.example.community.dto.User.Request.UserSigninRequestDto;
+import com.example.community.dto.User.Request.UserRegisterRequestDto;
 import com.example.community.security.JwtTokenProvider;
 import com.example.community.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +40,7 @@ public class RegisterUserTest {
     @Test
     @DisplayName("회원가입 성공 - 성공적으로 201 반환")
     void registerUser_success() throws Exception {
-        UserSigninRequestDto requestDto = new UserSigninRequestDto("user@example.com", "Password123!", "닉네임", "/uploads/thumbnail_example.jpg");
+        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("user@example.com", "Password123!", "닉네임", "/uploads/thumbnail_example.jpg");
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class RegisterUserTest {
     @Test
     @DisplayName("회원가입 실패 - 이메일 형식이 잘못됨")
     void registerUser_invalidEmail() throws Exception {
-        UserSigninRequestDto requestDto = new UserSigninRequestDto("invalid-email", "password123!", "닉네임", "/uploads/thumbnail_example.jpg");
+        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("invalid-email", "password123!", "닉네임", "/uploads/thumbnail_example.jpg");
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ public class RegisterUserTest {
     @Test
     @DisplayName("회원가입 실패 - 비밀번호 형식이 잘못됨")
     void registerUser_invalidPassword() throws Exception {
-        UserSigninRequestDto requestDto = new UserSigninRequestDto("user@example.com", "invalid-password", "닉네임", "/uploads/thumbnail_example.jpg");
+        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("user@example.com", "invalid-password", "닉네임", "/uploads/thumbnail_example.jpg");
 
         mockMvc.perform(post("/users")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ public class RegisterUserTest {
     @Test
     @DisplayName("회원가입 실패 - 닉네임 형식이 잘못됨")
     void registerUser_invalidNickname() throws Exception {
-        UserSigninRequestDto requestDto = new UserSigninRequestDto("user@example.com", "Password123!", "", "/uploads/thumbnail_example.jpg");
+        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("user@example.com", "Password123!", "", "/uploads/thumbnail_example.jpg");
 
         mockMvc.perform(post("/users")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class RegisterUserTest {
     @Test
     @DisplayName("회원가입 실패 - 이미지 형식이 잘못됨")
     void registerUser_invalidImageUrl() throws Exception {
-        UserSigninRequestDto requestDto = new UserSigninRequestDto("user@example.com", "Password123!", "닉네임", "/not_invalid_image.jpg");
+        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("user@example.com", "Password123!", "닉네임", "/not_invalid_image.jpg");
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)

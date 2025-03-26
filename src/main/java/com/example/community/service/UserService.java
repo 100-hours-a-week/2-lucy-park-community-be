@@ -4,42 +4,32 @@ import com.example.community.dto.User.Request.*;
 import com.example.community.dto.User.Response.UserLoginResponseDto;
 import com.example.community.dto.User.Response.UserUpdateNicknameResponseDto;
 import com.example.community.dto.User.Response.UserUpdateProfileImageResponseDto;
-import com.example.community.entity.Comment;
-import com.example.community.entity.Post;
-import com.example.community.entity.RefreshToken;
 import com.example.community.entity.User;
 import com.example.community.repository.CommentRepository;
 import com.example.community.repository.PostRepository;
-import com.example.community.repository.RefreshTokenRepository;
 import com.example.community.repository.UserRepository;
-import com.example.community.security.JwtAuthenticationFilter;
-import com.example.community.security.JwtTokenProvider;
 import com.example.community.security.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenService tokenService;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     // 회원가입
-    public User registerUser(@Valid UserSigninRequestDto requestDto) {
+    public User registerUser(@Valid UserRegisterRequestDto requestDto) {
         if(userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
         if(requestDto.getImageUrl() == null) {
@@ -68,19 +58,7 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 토큰 발급
-        String accessToken = jwtUtil.generateAccessToken(user);
-        String refreshToken = jwtUtil.generateRefreshToken(user);
-
-        RefreshToken newToken = RefreshToken.builder()
-                        .user(user)
-                        .token(refreshToken)
-                        .build();
-
-        refreshTokenRepository.findByUser(user).ifPresentOrElse(
-                existingToken -> existingToken.updateToken(refreshToken),
-                () -> refreshTokenRepository.save(newToken));
-                //.orElseGet(() -> refreshTokenRepository.save(newToken));
+        String accessToken = tokenService.generateTokensForUser(user);
 
 
         return UserLoginResponseDto.builder()
@@ -96,6 +74,7 @@ public class UserService {
     public UserUpdateProfileImageResponseDto updateProfileImage(@Valid UserUpdateProfileImageRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
+
         if(requestDto.getImageUrl() != null) {
             user.setImageUrl(requestDto.getImageUrl());
             userRepository.save(user);
@@ -106,10 +85,15 @@ public class UserService {
                 .build();
     }
 
-    //
+    // 회원 닉네임 수정
     public UserUpdateNicknameResponseDto updateNickname(@Valid UserUpdateNicknameRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
+
+        if(userRepository.findByNickname(requestDto.getNickname()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
+
         if(requestDto.getNickname() != null) {
             user.setNickname(requestDto.getNickname());
             userRepository.save(user);
@@ -120,7 +104,7 @@ public class UserService {
     }
 
     // 비밀번호
-    public User updatePassword(@Valid UserUpdatePasswordRequestDto requestDto) {
+    public void updatePassword(@Valid UserUpdatePasswordRequestDto requestDto) {
 
         User user = jwtUtil.verifyUser();
         if(requestDto.getPassword() != null) {
@@ -128,17 +112,13 @@ public class UserService {
             user.setPassword(encodedPassword);
             userRepository.save(user);
         }
-        return user;
     }
 
     // 로그아웃
     public User logoutUser() {
         User user = jwtUtil.verifyUser();
 
-        if(user.getRefreshToken() != null) {
-            user.getRefreshToken().expireToken();
-            refreshTokenRepository.save(user.getRefreshToken());
-        }
+        tokenService.expireRefreshTokenForUser(user);
 
         user.setRefreshToken(null);
         userRepository.save(user);
@@ -150,24 +130,20 @@ public class UserService {
         User user = jwtUtil.verifyUser();
         Long userId = user.getId();
 
-        long expectedCommentCount = commentRepository.countByUserIdAndDeletedFalse(userId);
-        long expectedPostCount = postRepository.countByUserIdAndDeletedFalse(userId);
+        int expectedCommentCount = commentRepository.countByUserIdAndDeletedFalse(userId);
+        int expectedPostCount = postRepository.countByUserIdAndDeletedFalse(userId);
 
-        try {
-            int deletedComments = commentRepository.softDeletedCommentsByUserId(userId);
-            int deletedPosts = postRepository.softDeletedPostsByUserId(userId);
+        int deletedComments = commentRepository.softDeletedCommentsByUserId(userId);
+        int deletedPosts = postRepository.softDeletedPostsByUserId(userId);
 
-            if(deletedComments != expectedCommentCount) {
-                throw new RuntimeException("댓글 삭제 처리 과정에서 오류가 발생하였습니다.");
-            }
-            if(deletedPosts != expectedPostCount) {
-                throw new RuntimeException("게시글 삭제 처리 과정에서 오류가 발생하였습니다.");
-            }
-            user.setDeleted(true);
-            userRepository.save(user);
-            return user;
-        } catch (Exception e) {
-            throw new RuntimeException("회원 탈퇴 처리 중 예외가 발생하였습니다.", e);
+        if(deletedComments != expectedCommentCount) {
+            throw new RuntimeException("댓글 삭제 처리 과정에서 오류가 발생하였습니다.");
         }
+        if(deletedPosts != expectedPostCount) {
+            throw new RuntimeException("게시글 삭제 처리 과정에서 오류가 발생하였습니다.");
+        }
+        user.setDeleted(true);
+        userRepository.save(user);
+        return user;
     }
 }

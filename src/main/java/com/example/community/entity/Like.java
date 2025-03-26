@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Lazy;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "post_likes")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

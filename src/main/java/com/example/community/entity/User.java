@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private String imageUrl;
 
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @Builder.Default

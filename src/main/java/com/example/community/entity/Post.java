@@ -51,7 +51,7 @@ public class Post {
     private LocalDateTime deletedAt;
 
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(nullable = false)
     private boolean deleted = false;
 
     @ManyToOne

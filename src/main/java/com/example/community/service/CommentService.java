@@ -15,6 +15,7 @@ import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CommentService {
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
@@ -69,11 +69,14 @@ public class CommentService {
     public Comment updateComment(Long postId, Long commentId, @Valid CommentUpdateRequestDto requestDto) {
         User user = jwtUtil.verifyUser();
 
-        Comment comment = commentRepository.findCommentByIdAndPostId(commentId, postId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        Comment comment = commentRepository.findCommentByIdAndPostId(commentId, post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
         if(!comment.getUser().getId().equals(user.getId())) {
-            new SecurityException("댓글 수정 권한이 없습니다.");
+            throw new SecurityException("댓글 수정 권한이 없습니다.");
         }
 
         comment.setContent(requestDto.getContent());
@@ -84,11 +87,15 @@ public class CommentService {
     public Comment deleteComment(Long postId, Long commentId) {
         User user = jwtUtil.verifyUser();
 
-        Comment comment = commentRepository.findCommentByIdAndPostId(commentId, postId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+
+        Comment comment = commentRepository.findCommentByIdAndPostId(commentId, post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글입니다."));
 
         if(!comment.getUser().getId().equals(user.getId())) {
-            new SecurityException("댓글 삭제 권한이 없습니다.");
+            throw new SecurityException("댓글 삭제 권한이 없습니다.");
         }
 
         comment.setDeleted(true);
