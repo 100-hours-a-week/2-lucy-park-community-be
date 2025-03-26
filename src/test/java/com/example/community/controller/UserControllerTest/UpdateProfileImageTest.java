@@ -47,7 +47,7 @@ public class UpdateProfileImageTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(responseDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$message").value("update_profile_image_success"));
+                .andExpect(jsonPath("$.message").value("update_profile_image_success"));
 
         verify(userService, times(1)).updateProfileImage(any());
     }

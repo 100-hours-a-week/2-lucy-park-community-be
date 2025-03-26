@@ -35,6 +35,10 @@ public class UpdatePostTest {
     @MockBean
     private PostService postService;
 
+    @SuppressWarnings("removal")
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
     @Autowired
     private ObjectMapper objectMapper;
 

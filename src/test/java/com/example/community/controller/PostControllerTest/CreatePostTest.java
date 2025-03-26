@@ -37,6 +37,10 @@ public class CreatePostTest {
     @MockBean
     private PostService postService;
 
+    @SuppressWarnings("removal")
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -95,7 +99,11 @@ public class CreatePostTest {
     @Test
     @DisplayName("게시글 작성 실패 - 이미지 형식이 잘못됨")
     void createPost_invalidImageUrl() throws Exception {
-        UserRegisterRequestDto requestDto = new UserRegisterRequestDto("user@example.com", "Password123!", "닉네임", "/not_invalid_image.jpg");
+        PostCreateRequestDto requestDto = PostCreateRequestDto.builder()
+                .title("example")
+                .content("")
+                .imageUrl("invalid_image")
+                .build();
 
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
