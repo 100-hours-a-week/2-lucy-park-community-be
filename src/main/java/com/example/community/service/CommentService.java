@@ -32,6 +32,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
+    @Transactional(readOnly = true)
     public List<CommentResponseDto> getComments(Long postId) {
         return commentRepository.findAllByPostIdAndDeletedFalseOrderByCreatedAtAsc(postId)
                 .stream()

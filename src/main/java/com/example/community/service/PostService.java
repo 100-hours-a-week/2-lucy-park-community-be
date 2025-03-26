@@ -95,6 +95,7 @@ public class PostService {
     }
 
     // 전체 게시글 조회
+    @Transactional(readOnly = true)
     public List<PostListResponseDto> readPosts() {
         return postRepository.findAllWithComments().stream()
                 .sorted(Comparator.comparing(Post::getId))
