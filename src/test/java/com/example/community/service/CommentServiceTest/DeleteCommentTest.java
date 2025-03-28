@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
 
@@ -176,7 +177,7 @@ public class DeleteCommentTest {
         when(postRepository.findById(2L)).thenReturn(Optional.of(post));
         when(commentRepository.findCommentByIdAndPostId(2L, 2L)).thenReturn(Optional.of(comment));
 
-        SecurityException exception = assertThrows(SecurityException.class, () -> {
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> {
             commentService.deleteComment(2L, 2L);
         });
 

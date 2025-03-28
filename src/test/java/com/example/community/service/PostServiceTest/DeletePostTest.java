@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
 
@@ -106,7 +107,7 @@ public class DeletePostTest {
         when(jwtUtil.verifyUser()).thenReturn(currentUser);
         when(postRepository.findById(2L)).thenReturn(Optional.of(post));
 
-        SecurityException exception = assertThrows(SecurityException.class, () -> {
+        AccessDeniedException exception = assertThrows(AccessDeniedException.class, () -> {
             postService.deletePost(2L);
         });
 

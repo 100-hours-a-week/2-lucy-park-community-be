@@ -16,6 +16,12 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByPostIdOrderByCreatedAtAsc(Long postId);
     Optional<Comment> findCommentByIdAndPostId(Long id, Long postId);
 
+    @Query("select distinct c from Comment c " +
+            "left join fetch c.children " +
+            "where c.post.id = :postId and c.parent is null " +
+            "order by c.createdAt asc")
+    List<Comment> findTopLevelCommentsWithChildrenOrderByCreatedAtAsc(@Param("postId") Long postId);
+
     @Modifying
     @Query("UPDATE Comment c SET c.deleted = true WHERE c.user.id = :userId AND c.deleted = false")
     int softDeletedCommentsByUserId(@Param("userId") Long userId);

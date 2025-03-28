@@ -18,6 +18,7 @@ import com.example.community.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -148,7 +149,7 @@ public class PostService {
 
         // 마찬가지로 프론트엔드에서도 처리 필요
         if(!post.getUser().getId().equals(user.getId())) {
-            throw new SecurityException("게시글 삭제 권한이 없습니다.");
+            throw new AccessDeniedException("게시글 삭제 권한이 없습니다.");
         }
 
         post.setDeleted(true);
