@@ -112,6 +112,7 @@ public class PostService {
                                 .imageUrl(post.getUser().getImageUrl())
                                 .build())
                         .commentCount(post.getComments().size())
+                        .createdAt(post.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
     }
