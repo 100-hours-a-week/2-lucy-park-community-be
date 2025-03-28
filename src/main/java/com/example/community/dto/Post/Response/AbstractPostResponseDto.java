@@ -23,6 +23,7 @@ public abstract class AbstractPostResponseDto {
     protected String title;
     protected int likeCount;
     protected int viewCount;
+    protected int commentCount;
     protected UserResponseDto user;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")

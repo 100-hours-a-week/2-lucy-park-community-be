@@ -35,6 +35,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final CommentService commentService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
@@ -134,6 +135,7 @@ public class PostService {
                         .imageUrl(post.getUser().getImageUrl())
                         .build())
                 .createdAt(post.getCreatedAt())
+                .comments(commentService.getComments(postId))
                 .build();
     }
 

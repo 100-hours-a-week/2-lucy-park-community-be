@@ -22,8 +22,8 @@ public class PostDetailResponseDto extends AbstractPostResponseDto {
     @Builder.Default
     protected List<CommentResponseDto> comments = new ArrayList<>();
 
-    public PostDetailResponseDto(Long id, String title, String content, String imageUrl, int likeCount, int viewCount, LocalDateTime createdAt, UserResponseDto responseDto, List<CommentResponseDto> comments) {
-        super(id, title, likeCount, viewCount, responseDto, createdAt);
+    public PostDetailResponseDto(Long id, String title, String content, String imageUrl, int likeCount, int viewCount, int commentCount, LocalDateTime createdAt, UserResponseDto responseDto, List<CommentResponseDto> comments) {
+        super(id, title, likeCount, viewCount, commentCount, responseDto, createdAt);
         this.content = content;
         this.imageUrl = imageUrl;
         this.comments = comments;
