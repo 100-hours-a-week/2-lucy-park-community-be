@@ -31,7 +31,7 @@ public class CommentMapper {
      * flattenDescendants() 메서드는 주어진 댓글의 모든 하위 댓글(자식, 자식의 자식 등)을 평탄하게 수집하여,
      * 각 자식 댓글은 convertToDtoFlat()을 통해 변환한 후 하나의 리스트로 반환합니다.
      */
-    private List<CommentResponseDto> flattenDescendants(Comment comment) {
+    private static List<CommentResponseDto> flattenDescendants(Comment comment) {
         List<CommentResponseDto> flatList = new ArrayList<>();
         if (comment.getChildren() != null) {
             for (Comment child : comment.getChildren()) {
@@ -48,7 +48,7 @@ public class CommentMapper {
      * convertToDtoFlat() 메서드는 최상위가 아닌 대댓글(어떤 depth이든 상관없이)을 평탄하게 변환합니다.
      * 여기서는 children 필드를 빈 리스트로 처리하여, 재귀적 중첩 없이 단일 레벨로 표현합니다.
      */
-    private CommentResponseDto convertToDtoFlat(Comment comment) {
+    private static CommentResponseDto convertToDtoFlat(Comment comment) {
         ParentCommentDto parentDto = null;
         if (comment.getParent() != null) {
             parentDto = ParentCommentDto.builder()
