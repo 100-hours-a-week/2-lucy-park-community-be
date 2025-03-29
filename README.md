@@ -36,7 +36,9 @@ Spring Boot는 해커톤 이후 두 번째로 접해보는 프레임워크였기
 - 사용자 정보 수정 관련 API는 로그 추적 및 유지보수성 측면에서 분리 처리.
 - 반복 로직은 `JwtTokenProvider` 내부 로직으로 통합.
 - 양방향 참조에 대한 무한루프 방지를 위해 `@JsonIdentityInfo` 도입 및 DTO로 분리하여 해결.
-- `@EntityGraph`를 통한 Lazy Loading 최적화, 댓글 정렬을 위한 엔티티 정렬 설정 등 성능 개선 시도.  
+- `@EntityGraph`를 통한 Lazy Loading 최적화, 댓글 정렬을 위한 엔티티 정렬 설정 등 성능 개선 시도.
+- 대댓글 구현을 위해 댓글 엔티티 내에 자기 참조 관계를 도입하여 댓글 간 계층 구조를 지원, fetch join 적용
+
   ⠀  
 
 
